@@ -25,8 +25,8 @@ use MotorbikeClub;
  in database normalization.
 
  Because this DB stores a very small amount of data there is no indexing for
- foreign keys. This could be considered to keep the DB performing better if
- the scaling were to increase.
+ foreign keys. This could be considered to be added later to keep the DB
+ performing better if the scaling were to increase.
 
  All foreign keys have on update cascade to make sure that data transfers
  in case of changes to one table.
@@ -46,10 +46,11 @@ DROP TABLE IF EXISTS Country;
 CREATE TABLE Country
 (
     CountryID INT NOT NULL AUTO_INCREMENT,
-    CountryName VARCHAR(20) NOT NULL,
+    CountryName VARCHAR(50) NOT NULL,
 
     PRIMARY KEY (CountryID)
 );
+
 
 -- City table with foreign Key to Country.
 DROP TABLE IF EXISTS City;
@@ -79,7 +80,7 @@ DROP TABLE if exists Chapter;
 CREATE TABLE Chapter
 (
     ChapterID INT NOT NULL AUTO_INCREMENT,
-    ChapterName VARCHAR(50) NOT NULL,
+    ChapterName VARCHAR(100) NOT NULL,
     CityID INT,
     CreationDate DATE NOT NULL,
 
@@ -143,7 +144,9 @@ CREATE TABLE Event
 
     PRIMARY KEY (EventID),
     FOREIGN KEY (CityID) REFERENCES City(CityID)
-    ON UPDATE CASCADE,
+    ON UPDATE CASCADE
+    -- ON DELETE CASCADE: Deletes linked event if city it is held in is gone.
+    ON DELETE CASCADE,
     FOREIGN KEY (ChapterID) REFERENCES Chapter(ChapterID)
     ON UPDATE CASCADE
     -- ON DELETE CASCADE: Deletes linked events if the parent chapter is removed.
@@ -175,7 +178,8 @@ CREATE TABLE Member_Event
   Bike table links a bike with information to a member of a chapter.
  No NOT NULL set for year, because some members might have a bike that
  they do know the make and model of, but not exactly what year it was
- made
+ made. Allows NULL for LicensePlate as well, in case the bike isn't
+ currently registered.
  */
 DROP TABLE IF EXISTS Bike;
 CREATE TABLE Bike
@@ -185,7 +189,7 @@ CREATE TABLE Bike
     Model VARCHAR(50) NOT NULL,
     Make VARCHAR(25) NOT NULL,
     Year YEAR,
-    LicensePlate VARCHAR(8) NOT NULL UNIQUE,
+    LicensePlate VARCHAR(8) UNIQUE,
 
     PRIMARY KEY (BikeID),
     FOREIGN KEY (MemberID) REFERENCES Member(MemberID)

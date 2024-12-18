@@ -1,3 +1,4 @@
+-- Use here to ensure we are using the correct DB for queries.
 use MotorbikeClub;
 
 # --------------------------------------------------------------------------- #
@@ -14,13 +15,17 @@ that manufacturer.
 plate, and year.
 7. Select the newest member for each chapter, listing the chapter, member’s
 name, and join date.
-
  */
 
 # --------------------------------------------------------------------------- #
 -- 1.
--- Shows the "biker" or member that has the latest birthdate
-SELECT Name AS `Youngest Biker`
+-- Which biker is the youngest?
+
+/*
+ Shows the "biker" or member that has the latest birthdate with birthdate.
+ It includes the date of birth for context.
+ */
+SELECT Name AS `Youngest Biker`, Birthdate AS `Date of Birth`
 FROM Member
 ORDER BY Birthdate DESC
 LIMIT 1;
@@ -28,6 +33,9 @@ LIMIT 1;
 
 # --------------------------------------------------------------------------- #
 -- 2.
+-- List all bike manufactures and the total number of registered bikes of
+-- that manufacturer.
+
 -- Counts all the different models of bikes from each manufacturer and prints
 -- it out to the user with the name "Total Bikes"
 SELECT Make AS `Manufacturer`, COUNT(Model) AS `Total Bikes`
@@ -38,6 +46,7 @@ ORDER BY `Total Bikes` DESC;
 
 # --------------------------------------------------------------------------- #
 -- 3.
+-- Show all data for bikes manufactured by ‘Yamaha’
 /*
  This query only uses information actually directly connected to the
  bike in the SELECT part.
@@ -54,6 +63,7 @@ WHERE Make = 'Yamaha';
  together with the bike. Could have Selected only;
  "BikeID, Model, Make, Year, LicensePlate" as shown above.
  */
+
 SELECT *
 FROM Bike
 WHERE Make = 'Yamaha';
@@ -61,7 +71,10 @@ WHERE Make = 'Yamaha';
 
 # --------------------------------------------------------------------------- #
 -- 4.
+-- Display each of the chapters and the corresponding chairman.
+
 -- This query shows each chapter and their Chairman
+-- Joins Member to get their RANK.
 SELECT Chapter.ChapterName AS `Chapter`,
                Member.Name AS `Chairman`
 FROM Chapter
@@ -70,7 +83,13 @@ WHERE Member.MemberRank = 'Chairman';
 
 # --------------------------------------------------------------------------- #
 -- 5.
--- Gives out Make, Model and LicensePlate for each member(name)
+-- For each member, list the make, model and registration of their bikes.
+
+/*
+ Gives out Make, Model and LicensePlate for each member(name)
+ Join between Member and Bike for Different Information,
+ MemberID to link right information
+ */
 SELECT Member.Name AS `Biker`, Bike.Make AS `Manufacturer`,
        Bike.Model AS `Model`, Bike.LicensePlate `Registration`
 FROM Member
@@ -78,6 +97,8 @@ JOIN Bike ON Member.MemberID = Bike.MemberID;
 
 # --------------------------------------------------------------------------- #
 -- 6.
+-- For all bikes manufactured before 2015, list the chapter name, license
+-- plate, and year.
 /*
  Selects Chapter, licensePlate, and year to show user. Two Joins to get all
  wanted information out correctly and not printing just ID for chapter or
@@ -92,6 +113,8 @@ WHERE Bike.Year < 2015;
 
 # --------------------------------------------------------------------------- #
 -- 7.
+-- Select the newest member for each chapter, listing the chapter, member’s
+-- name, and join date.
 /*
  The correlated subquery runs for each row, which can be slower on large datasets.
  The IN-based solution avoids this by precomputing the MAX(JoinDate) for each chapter.

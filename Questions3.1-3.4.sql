@@ -55,12 +55,20 @@ BEGIN
      "(Assume that countries do not have duplicate city names within their
      borders.)"
      */
-    IF NOT EXISTS (SELECT City_ID FROM City WHERE city = city_name AND country_iso = countryiso) THEN
+    IF NOT EXISTS (SELECT 1 FROM City WHERE city = city_name AND country_iso = countryiso) THEN
     -- Inserts given parameters into the right place.
     INSERT INTO City(city, lat, lng, country, country_iso, population, has_airport)
     VALUES (city_name, latitude, longitude,
             country_name, countryiso,
             population_est, hasairport);
+
+    ELSE
+        -- Error message if the city exists already.
+        -- SQLSTATE '45000' for user error
+        SIGNAL SQLSTATE '45000'
+            -- CONCAT to show what argument(s) caused error.
+            SET MESSAGE_TEXT = CONCAT('Error: City "', city_name,'" in country "',
+                                      country_name, '" already exists in database');
     END IF;
 
 end //
@@ -79,16 +87,26 @@ CREATE PROCEDURE Update_City_Population_By_Name_CountryISO(IN city_name VARCHAR(
 BEGIN
     /*
      Checks if the city already exists, before updating it.
+     It uses IF EXISTS rather than ON DUPLICATE KEY UPDATE.
      We are told to that there are no duplicate cities in countries.
      "(Assume that countries do not have duplicate city names within their
      borders.)"
      */
-    IF EXISTS (SELECT City_ID FROM City WHERE City = city_name AND Country_ISO = countryiso) THEN
+    IF EXISTS (SELECT 1 FROM City WHERE City = city_name AND Country_ISO = countryiso) THEN
     -- Updates city with given argument and given parameters for WHERE clause.
     UPDATE City
     SET population = population_est
     WHERE city = city_name
     AND country_iso = countryiso;
+
+    ELSE
+        -- Returns an error if city doesn't exist.
+        -- SQLSTATE '45000' for user error
+        SIGNAL SQLSTATE '45000'
+            -- CONCAT to show what argument(s) caused error.
+            SET MESSAGE_TEXT = CONCAT('Error: City "', city_name, '" with ISO "',
+                                      countryiso,'" not found in database.');
+
     END IF;
 
 end //
@@ -100,18 +118,27 @@ end //
  Gets city name in one column, then uses CONCAT for latitude and longitude
  into a standard format.
  */
-CREATE PROCEDURE Get_Name_And_Position_From_CountryISO_If_Airport(IN countrytiso VARCHAR(2))
+CREATE PROCEDURE Get_Name_And_Position_From_CountryISO_If_Airport(IN countryiso VARCHAR(2))
 
 BEGIN
     /*
-     No use for IF EXISTS here because it will only show for the ones that exists.
+     If exists to check if there is any cities that matches the country ISO given.
      Concat gives format: (1.1234, 5.6789)
      */
-    SELECT city AS `City name`, CONCAT('(', lat, ',', lng, ')') AS `Position`
-    FROM City
-    WHERE country_iso = countrytiso
-    -- 1 = True
-    AND has_airport = 1;
+    IF EXISTS (SELECT 1 FROM City WHERE country_iso = countryiso) THEN
+        SELECT city AS `City name`, CONCAT('(', lat, ',', lng, ')') AS `Position`
+        FROM City
+        WHERE country_iso = countryiso
+        -- 1 = True
+        AND has_airport = 1;
+    ELSE
+        -- Error message if no city has given ISO.
+        -- SQLSTATE '45000' for user error
+        SIGNAL SQLSTATE '45000'
+            -- CONCAT to show what argument(s) caused error.
+            SET MESSAGE_TEXT = CONCAT('Error: No cities corresponding with ISO "',
+                                      countryiso, '" Found in database.');
+    END IF;
 
 end //
 
