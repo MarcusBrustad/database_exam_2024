@@ -172,8 +172,8 @@ DELIMITER //
 CREATE PROCEDURE Create_New_Event_With_Names(IN event_name VARCHAR(100),
                                              IN event_date DATE,
                                              IN city_name VARCHAR(20),
-                                             IN country_name VARCHAR(20),
-                                             IN chapter_name VARCHAR(50))
+                                             IN country_name VARCHAR(50),
+                                             IN chapter_name VARCHAR(100))
 
 BEGIN
 
