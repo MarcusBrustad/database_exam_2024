@@ -1,9 +1,20 @@
+/*
+ Setting up the database with utf8mb4 character set to support
+ special characters, including emojis and extended Unicode symbols.
+ utf8mb4 is the recommended choice over utf8
+ as it fully supports 4-byte characters.
+
+ "utf8mb4_unicode_ci" is added for case-insensitive sorting
+ and compatibility with characters from international languages.
+ */
+
 DROP DATABASE IF EXISTS MotorbikeClub;
 CREATE DATABASE MotorbikeClub
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
 use MotorbikeClub;
+
 
 # --------------------------------------------------------------------------- #
 -- Question 1.1 Create database tables.
