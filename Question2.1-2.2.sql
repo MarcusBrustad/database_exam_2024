@@ -236,7 +236,7 @@ BEGIN
     INSERT INTO Event(EventName, EventDate, CityID, ChapterID)
     VALUES(event_name,event_date,city_id,chapter_id );
 
-end //
+END //
 DELIMITER ;
 
 

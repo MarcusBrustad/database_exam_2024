@@ -71,7 +71,7 @@ BEGIN
                                       country_name, '" already exists in database');
     END IF;
 
-end //
+END //
 
 # --------------------------------------------------------------------------- #
 -- 3.2
@@ -109,7 +109,7 @@ BEGIN
 
     END IF;
 
-end //
+END //
 
 
 # --------------------------------------------------------------------------- #
@@ -140,7 +140,7 @@ BEGIN
                                       countryiso, '" Found in database.');
     END IF;
 
-end //
+END //
 
 
 # --------------------------------------------------------------------------- #
@@ -163,7 +163,7 @@ BEGIN
     -- Flushing to commit privileges to the new user.
     FLUSH PRIVILEGES;
 
-end //
+END //
 
 /*
  This one took a lot of reading up to be able to find the "cleanest"
