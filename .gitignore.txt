@@ -1,0 +1,8 @@
+../../*
+
+
+*.log
+*.dat
+*.ini
+*.lnk
+.DS_Store
